@@ -1,0 +1,13 @@
+{
+  "name": "playwright-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Atharva-Deshmukh/playwright-project.git",
+  "author": "Atharva Deshmukh <atharvadeshmukh2103@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.53.2",
+    "@types/node": "^24.0.10"
+  },
+  "scripts": {}
+}
