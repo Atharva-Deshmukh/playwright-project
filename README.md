@@ -8,3 +8,4 @@
 
 - Specpattern
   Tests are picked from this option in config: testDir: './tests'
+  Spec pattern can be specified by testMatch: '**/*.spec.ts'
