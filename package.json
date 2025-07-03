@@ -9,5 +9,8 @@
     "@playwright/test": "^1.53.2",
     "@types/node": "^24.0.10"
   },
-  "scripts": {}
+  "scripts": {
+     "playwright:run-dev-int-1": "playwright test tests/dev-int-1",
+     "playwright:open-dev-int-1": "playwright test --ui tests/dev-int-1"
+  }
 }
