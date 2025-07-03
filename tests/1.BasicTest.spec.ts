@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+/* Every test starts with goto()
+
+ We have {page} fixture passed in every test's callback function.*/
+
 test('has title', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
