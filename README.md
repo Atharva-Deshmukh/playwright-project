@@ -9,3 +9,6 @@
 - Specpattern
   Tests are picked from this option in config: testDir: './tests'
   Spec pattern can be specified by testMatch: '**/*.spec.ts'
+
+- Just like cypress's option watchForFileChanges: false,
+  playwright has eye icon in UI mode runner, which reruns the test once changes are made to it
