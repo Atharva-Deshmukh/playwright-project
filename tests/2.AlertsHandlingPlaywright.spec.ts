@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.skip('Verify alert', async ({ page }) => {
+test('Verify alert', async ({ page }) => {
 
   /* Handle alert as below */
   page.on('dialog', async (dialog) => {
@@ -25,7 +25,6 @@ test.skip('Verify alert', async ({ page }) => {
 
 test('Verify Confirmation with OK', async ({ page }) => {
 
-  /* Handle alert as below */
   page.on('dialog', async (dialog) => {
     expect(await dialog.type()).toBe('confirm');             /* Type of dialog */
     expect(await dialog.message()).toBe('Press a button!');  /* Message of dialog */
@@ -44,4 +43,28 @@ test('Verify Confirmation with OK', async ({ page }) => {
       await confirmButton.click();
   });
 
+});
+
+test('Verify Prompt dialogue with OK and some message', async ({ page }) => {
+
+  page.on('dialog', async (dialog) => {
+    expect(await dialog.type()).toBe('prompt');             /* Type of dialog */
+    expect(await dialog.message()).toBe('Please enter your name:');  /* Message of dialog */
+    expect(await dialog.defaultValue()).toBe('Harry Potter'); /* Default value in the prompt */
+
+    await dialog.accept('INPUT MESSAGE');   /* Closing prompt with some input message */
+    // await dialog.dismiss();   /* Closes prompt with Cancel */
+  });
+
+  const url: string = 'https://testautomationpractice.blogspot.com/';
+  const expectedPageTitle: string = 'Automation Testing Practice';
+  const promptButton = await page.locator('#promptBtn');
+
+  await page.goto(url);
+
+  await expect(page).toHaveTitle(expectedPageTitle);
+  await expect(promptButton).toBeVisible().then(async () => {
+      await promptButton.click();
+      expect(await page.locator('p#demo')).toHaveText('Hello INPUT MESSAGE! How are you today?');
+  });
 });
