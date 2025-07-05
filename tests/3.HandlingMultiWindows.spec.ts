@@ -31,7 +31,7 @@ test('Page and browser context concepts', async () => {
     expect(await page2.title()).toBe('Human Resources Management Software | OrangeHRM HR Software');
 });
 
-test.only('Handling new page/tab', async () => {
+test('Handling new page/tab', async () => {
 
     /* We can create different browser instances by importing different browser modules */
     const browserInstance = await chromium.launch();
@@ -60,6 +60,29 @@ test.only('Handling new page/tab', async () => {
 
     expect(await newPage).toHaveTitle('Human Resources Management Software | OrangeHRM HR Software');
     expect(await newPage.getByPlaceholder('Enter your email address here')).toBeVisible();
+});
+
+test('Handling Child tab/window/popup', async ({page}) => {
+
+    const childTabLocator = await page.locator('#openwindow');
+
+    await page.goto('https://rahulshettyacademy.com/AutomationPractice/');
+    expect(await page.title()).toBe('Practice Page');
+    
+    expect(childTabLocator).toBeVisible();
+
+    /* Create a new browser and context to handle popup */
+    const browserInstance = await chromium.launch();
+    const browserContext = await browserInstance.newContext();
+
+    /* We can use event = 'popup' */
+    const popupPromise = page.waitForEvent('popup');
+
+    await childTabLocator.click();
+    const newPage = await popupPromise;
+    await newPage.waitForLoadState();   /* Wait for the new popup to fully load */
+
+    expect(await newPage.locator('#navbarSupportedContent a').first()).toBeVisible();
 });
 
  
