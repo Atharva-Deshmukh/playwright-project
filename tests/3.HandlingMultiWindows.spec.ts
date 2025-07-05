@@ -10,7 +10,7 @@ import { test, expect, chromium } from '@playwright/test';
    But, we won't use use this default page sincee we are creating our own new page.
 */
 
-test('Handle multiple windows/pages', async () => {
+test('Page and browser context concepts', async () => {
 
     /* We can create different browser instances by importing different browser modules */
     const browserInstance = await chromium.launch();
@@ -18,8 +18,6 @@ test('Handle multiple windows/pages', async () => {
     /* Create a new browser context */
     const browserContext = await browserInstance.newContext();
 
-    /* Create new pages with this browserContext 
-       Both these pages are independent although same browserContext is used to create them. */
     const page1 = await browserContext.newPage();
     const page2 = await browserContext.newPage();
 
@@ -33,3 +31,35 @@ test('Handle multiple windows/pages', async () => {
     expect(await page2.title()).toBe('Human Resources Management Software | OrangeHRM HR Software');
 });
 
+test.only('Handling new page/tab', async () => {
+
+    /* We can create different browser instances by importing different browser modules */
+    const browserInstance = await chromium.launch();
+
+    /* Create a new browser context */
+    const browserContext = await browserInstance.newContext();
+
+    const page1 = await browserContext.newPage();
+
+    const newTabLink = await page1.getByText('OrangeHRM, Inc');
+
+    await page1.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+    expect(await page1.title()).toBe('OrangeHRM');
+    
+    expect(newTabLink).toBeVisible();
+
+    /* The 'page' event can be used to handle new pages opened by target="_blank" links. 
+       Setting up listener for page event before clicking the new tab link. */
+    const pagePromise = browserContext.waitForEvent('page');
+
+    expect(await page1.locator('.orangehrm-login-logo')).toBeVisible();
+
+    await newTabLink.click();
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();   /* Wait for the new page to fully load */
+
+    expect(await newPage).toHaveTitle('Human Resources Management Software | OrangeHRM HR Software');
+    expect(await newPage.getByPlaceholder('Enter your email address here')).toBeVisible();
+});
+
+ 
