@@ -18,6 +18,7 @@ test('Verify alert', async ({ page }) => {
   await expect(page).toHaveTitle(expectedPageTitle);
   await expect(alertButton).toBeVisible().then(async () => {
       await alertButton.click();
+      await page.waitForTimeout(5000); // Hard Wait for 5 seconds to observe the alert
   });
 
 });
