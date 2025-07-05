@@ -85,4 +85,29 @@ test('Handling Child tab/window/popup', async ({page}) => {
     expect(await newPage.locator('#navbarSupportedContent a').first()).toBeVisible();
 });
 
+test('Handling MULTI popups', async ({page}) => {
+
+    const multiPopupButton = await page.locator('#PopUp');
+
+    await page.goto('https://testautomationpractice.blogspot.com/');
+    expect(await page.title()).toBe('Automation Testing Practice');
+    
+    expect(multiPopupButton).toBeVisible();
+
+    /* Capture all popup promises and wait for all of them to resolve */
+    const popupPromise1 = page.waitForEvent('popup');
+    const popupPromise2 = page.waitForEvent('popup');
+
+    await multiPopupButton.click();
+
+    // Wait for both popups to open
+    const [popup1, popup2] = await Promise.all([popupPromise1, popupPromise2]);
+
+    await popup1.waitForLoadState();
+    await popup2.waitForLoadState();
+
+    expect(await popup1.title()).not.toBe('');
+    expect(await popup2.title()).not.toBe('');
+});
+
  
