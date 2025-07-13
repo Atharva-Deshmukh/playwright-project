@@ -24,3 +24,18 @@ test('Keyboard actions playwright - Copying text using keyboard', async ({ page 
   you should use the input2.inputValue() method */
   await expect(input2.inputValue()).toBe(message);
 });
+
+test('Simulating user typing with some delay and filling characters sequentially', async ({ page }) => {
+
+  const url: string = 'https://gotranscript.com/text-compare';
+  const message: string = 'I am to be copied';
+  const input1 = page.getByPlaceholder('Paste one version of the text here.');
+  const input2 = page.getByPlaceholder('Paste another version of the text here.');
+
+  await page.goto(url);
+
+  await expect(input1).toBeVisible();
+  await expect(input2).toBeVisible();
+
+  await input1.pressSequentially(message, {delay: 500});
+});
