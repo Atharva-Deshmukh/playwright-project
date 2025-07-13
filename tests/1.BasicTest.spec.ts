@@ -56,3 +56,22 @@ test('Extract text from locator', async ({ page }) => {
   expect(await tableCellLocator.first().innerText()).toBe('Item');
 });
 
+/* just like cypress' :contains() 
+
+  await page.locator('x-details', { hasText: 'Details' }).click();
+*/
+
+test('Types of locators', async ({ page }) => {
+
+  const url: string = 'https://www.automationexercise.com/';
+  const expectedPageTitle: string = 'Automation Exercise';
+
+                            /* THIS IS INVALID  */
+  // const buttonLocator = await page.getByRole('button', { hasText: 'Test Cases' });
+  const buttonLocator = await page.getByRole('button', { name: 'Test Cases' });
+
+  await page.goto(url);
+  await expect(page).toHaveTitle(expectedPageTitle);
+  await expect(buttonLocator.first()).toBeVisible();
+});
+
