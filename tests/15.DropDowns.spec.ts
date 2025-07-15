@@ -58,3 +58,9 @@ test('Type-2: Multiple Dropdowns <select .. multiple>', async ({ page }) => {
    await page.selectOption('[data-testid="automation"]', ['Yes', 'No']);
 
 }); 
+
+test('Type-3: Bootstrap Dropdowns => without <select>', async ({ page }) => {
+
+    /* Simply get options locator and click in loop and if condition as above test 1 */
+
+}); 
