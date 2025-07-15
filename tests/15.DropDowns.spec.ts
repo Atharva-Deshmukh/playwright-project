@@ -64,3 +64,9 @@ test('Type-3: Bootstrap Dropdowns => without <select>', async ({ page }) => {
     /* Simply get options locator and click in loop and if condition as above test 1 */
 
 }); 
+
+test('Type-4: Autosuggest Dropdowns', async ({ page }) => {
+
+    /* Type something in search box, wait for autosuggestions locator. And then click on the suggestion */
+
+}); 
