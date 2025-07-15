@@ -70,3 +70,9 @@ test('Type-4: Autosuggest Dropdowns', async ({ page }) => {
     /* Type something in search box, wait for autosuggestions locator. And then click on the suggestion */
 
 }); 
+
+test('Type-5: Hidden Dropdowns', async ({ page }) => {
+
+    /* Freeze the UI and get locators*/
+
+}); 
