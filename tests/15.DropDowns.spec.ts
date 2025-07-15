@@ -25,6 +25,30 @@ test('Type-1: Dropdowns with <select>', async ({ page }) => {
   /* Count number of options - Approach 1 */
   await expect(dropDownLocator.locator('option')).toHaveCount(4);
 
-  /* Count number of options - Approach 2 */
+  /* Count number of options - Approach 2 
+     page.$$ returns an array of elements */
   await expect((await page.$$('[data-testid="automation"] option')).length).toBe(4);
+
+  /* Verify if particular option is present */
+  /* Way-1: Extracting whole text of <select> locator */
+  const allTextExtracted: string = await dropDownLocator.textContent() as string;
+  await expect(allTextExtracted).toContain('Yes');
+  await expect(allTextExtracted.includes('No')).toBeTruthy();
+
+   /* Way-2: Iterating every option */
+   const options = await page.$$('[data-testid="automation"] option');
+   for (const option of options) {
+     const optionText = await option.textContent();
+     console.log('OPTION TEXT -> ', optionText);
+   }
+
+   /* Way to select particular option */
+      const optionsExtracted = await page.$$('[data-testid="automation"] option');
+   for (const option of optionsExtracted) {
+     const optionText = await option.textContent();
+     if(optionText === 'Yes') {
+       await page.selectOption('[data-testid="automation"]', 'Yes');
+     }
+   }
+
 });
