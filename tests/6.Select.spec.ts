@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+// <select> tag scenario
 
 test('Verify Select', async ({ page }) => {
 
