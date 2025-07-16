@@ -31,7 +31,7 @@ export default defineConfig({
 
     // Collect trace for every test (enables time travel in UI)
     trace: 'on',
-    colorScheme: 'dark' /* Dark mode */
+    colorScheme: 'dark', /* Dark mode */
   },
 
   /* Configure projects for major browsers */
