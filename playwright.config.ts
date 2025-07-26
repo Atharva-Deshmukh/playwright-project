@@ -14,8 +14,9 @@ export default defineConfig({
   testDir: './tests', //specify the directory where your test files are located
   testMatch: '**/*.spec.ts', // Only files ending with .spec.ts will be considered as test files
 
-  /* Run tests in files in parallel */
-  fullyParallel: true,
+  /* Run tests in files in parallel - Default*/
+  // fullyParallel: true,
+  fullyParallel: false, // Serially execute tests
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
