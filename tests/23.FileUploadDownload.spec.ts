@@ -38,7 +38,7 @@ test('Upload Multiple files', async ({ page }) => {
 });
 
 /* This is not possible in cypress, there we have limitation for <input type="file">  */
-test.only('Upload Files on elements other than <input type="file">', async ({ page }) => {
+test('Upload Files on elements other than <input type="file">', async ({ page }) => {
 
   const url: string = 'https://the-internet.herokuapp.com/upload';
   const expectedPageTitle: string = 'The Internet';
@@ -57,5 +57,41 @@ test.only('Upload Files on elements other than <input type="file">', async ({ pa
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles('Files/File-1.pdf');
   await fileChooser.setFiles(['Files/File-1.pdf', 'Files/File-2.pdf']); /* For multiple files */
+  await page.waitForTimeout(3000);
+});
+
+test.only('Download files', async ({ page }) => {
+  const url: string = 'https://demo.automationtesting.in/FileDownload.html';
+  const expectedPageTitle: string = 'File input - Multi select';
+  const pageTitleLocator = await page.locator('h2:has-text("File Download Demo for Automation")');
+  const fileDownloadButton = await page.locator('a[type="button"]:has-text("Download")');
+
+  await page.goto(url);
+
+  await expect(page).toHaveTitle(expectedPageTitle);
+  await expect(pageTitleLocator).toBeVisible();
+  await expect(fileDownloadButton).toBeVisible();
+
+  // Way of writing - 1
+
+  // Start waiting for download before clicking. Note no await.
+  const downloadPromise = page.waitForEvent('download');
+  await fileDownloadButton.click();
+  const download = await downloadPromise;
+
+  // Wait for the download process to complete and save the downloaded file somewhere.
+  // By default, downloads are saved as per OS settings, we can target into specific path.
+  await download.saveAs('Files/' + download.suggestedFilename());
+  // suggestedFilename() -> Returns suggested filename for the download. Its typically computed by the browser
+
+  // Way of writing - 2
+
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    fileDownloadButton.click()
+  ]);
+
+  await download.saveAs('Files/' + download.suggestedFilename());
+
   await page.waitForTimeout(3000);
 });
