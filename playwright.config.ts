@@ -31,7 +31,7 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     // Collect trace for every test (enables time travel in UI)
-    trace: 'retain-on-failure',
+    trace: 'on',
     colorScheme: 'dark', /* Dark mode */
     video: 'off',
   },
