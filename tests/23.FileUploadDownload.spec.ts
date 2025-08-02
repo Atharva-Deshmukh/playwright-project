@@ -60,7 +60,7 @@ test('Upload Files on elements other than <input type="file">', async ({ page })
   await page.waitForTimeout(3000);
 });
 
-test.only('Download files', async ({ page }) => {
+test('Download files', async ({ page }) => {
   const url: string = 'https://demo.automationtesting.in/FileDownload.html';
   const expectedPageTitle: string = 'File input - Multi select';
   const pageTitleLocator = await page.locator('h2:has-text("File Download Demo for Automation")');

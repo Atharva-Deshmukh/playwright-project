@@ -10,7 +10,10 @@
     "@types/node": "^24.0.10"
   },
   "scripts": {
-     "playwright:run-dev-int-1": "playwright test tests/dev-int-1",
-     "playwright:open-dev-int-1": "playwright test --ui tests/dev-int-1"
+    "playwright:run-dev-int-1": "playwright test tests/dev-int-1",
+    "playwright:open-dev-int-1": "playwright test --ui tests/dev-int-1"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1"
   }
 }
