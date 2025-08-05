@@ -1,4 +1,8 @@
-/* Playwright Test runs tests in parallel. In order to achieve that, 
+/* In cypress, by default, spec files serially (one after another) when you use cypress run.
+Parallelization is not built-in for local runs with the open source version.
+Parallelization is available in Cypress Cloud, which is a paid service. 
+
+Playwright Test runs tests in parallel. In order to achieve that, 
 it runs several worker processes that run at the same time. 
 
 By default, test files are run in parallel. 
