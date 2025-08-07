@@ -80,7 +80,5 @@ export default defineConfig({
   },
 
   /* Env-wise project {} */
-
-  /* Configure projects for major browsers */
   projects: [projectObj]
 });
