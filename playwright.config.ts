@@ -1,12 +1,54 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Read from ".env" file.
+dotenv.config({ path: `./ENV_FILES/${process.env.ENV}.env` });
+
+const env_choosen: string = process.env.ENV!;
+let projectObj: any;
+
+switch (env_choosen) {
+  case 'DEV':
+    projectObj = {
+      name: 'dev_project',
+      use: {
+        baseUrl: process.env.baseUrl,
+        user_name: process.env.user_name,
+        user_pwd: process.env.user_pwd,
+        cust_var: process.env.cust_var,
+        ...devices['Desktop Chrome']
+      },
+
+    }
+    break;
+
+  case 'PROD':
+    projectObj = {
+      name: 'prod_project',
+      use: {
+        baseUrl: process.env.baseUrl,
+        user_name: process.env.user_name,
+        user_pwd: process.env.user_pwd,
+        cust_var: process.env.cust_var,
+        ...devices['Desktop Chrome']
+      },
+
+    }
+    break;
+
+  default:
+    projectObj = {
+      name: 'chromium',
+      use: { 
+        baseUrl: 'DEFAULT_URL',
+        user_name: 'DEFAULT_USERNAME',
+        user_pwd: 'DEFAULT_PASSWORD',
+        cust_var: 'DEFAULT_CUST_VAR',
+        ...devices['Desktop Chrome'] 
+      },
+    }
+    break;
+}
 
 export default defineConfig({
 
@@ -25,7 +67,7 @@ export default defineConfig({
   // workers: process.env.CI ? 1 : undefined,
   workers: 1, 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
- reporter: [['html', { open: 'on-failure' }]],
+  reporter: [['html', { open: 'on-failure' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -37,54 +79,8 @@ export default defineConfig({
     video: 'off',
   },
 
+  /* Env-wise project {} */
+
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: {
-    //     ...devices['Desktop Edge'],
-    //     channel: 'msedge'
-    //   },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: {
-    //     ...devices['Desktop Chrome'],
-    //     channel: 'chrome'
-    //   },
-    // },
-  ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  projects: [projectObj]
 });
