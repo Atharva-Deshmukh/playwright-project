@@ -38,7 +38,7 @@ switch (env_choosen) {
 
   default:
     projectObj = {
-      name: 'chromium',
+      name: 'DEFAULT_PROJECT',
       use: { 
         baseUrl: 'DEFAULT_URL',
         user_name: 'DEFAULT_USERNAME',
@@ -77,6 +77,12 @@ export default defineConfig({
     trace: 'on',
     colorScheme: 'dark', /* Dark mode */
     video: 'off',
+  },
+
+  expect: {
+    toHaveScreenshot: {
+      pathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}.png'
+    }
   },
 
   /* Env-wise project {} */
