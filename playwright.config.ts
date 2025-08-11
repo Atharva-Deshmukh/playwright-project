@@ -76,6 +76,7 @@ export default defineConfig({
     // Collect trace for every test (enables time travel in UI)
     trace: 'on',
     colorScheme: 'dark', /* Dark mode */
+    permissions: ["clipboard-read"],
     video: 'off',
   },
 
