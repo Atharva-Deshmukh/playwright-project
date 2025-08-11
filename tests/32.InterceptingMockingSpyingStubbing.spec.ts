@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import sinon from 'sinon';
 
 // /* Glob pattern concepts:
 // ----------------------------
@@ -52,4 +53,29 @@ test('Spying through Events', async ({ page }) => {
     console.log('TIMING -> ', request.timing().responseEnd - request.timing().responseStart);
 
     /* We similarly have page.on('response', (resp) => {}) object */
+});
+
+// import sinon from 'sinon';
+test.only('Spying Native objects', async ({ page }) => {
+  const myObj = {
+    myFunc: (a: number, b: number) => a + b
+  };
+
+  const spy = sinon.spy(myObj, 'myFunc');
+
+  // Expose the Node-side function to the browser
+  // The method adds a function called name on the window object of every frame in the page.
+  await page.exposeFunction('myFunc', myObj.myFunc);
+
+  const resp = await page.evaluate(async () => {
+    // Call the Node-side exposed function
+    return await (window as any).myFunc(2, 3);
+  });
+
+  expect(resp).toBe(5);
+  expect(spy.called).toBeTruthy();
+  expect(spy.callCount).toBe(1);
+  expect(spy.calledOnceWithExactly(2, 3)).toBeTruthy();
+
+  spy.restore();
 });

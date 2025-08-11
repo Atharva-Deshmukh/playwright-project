@@ -16,6 +16,7 @@
   "dependencies": {
     "clipboardy": "^4.0.0",
     "dotenv": "^17.2.1",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "sinon": "^21.0.0"
   }
 }
