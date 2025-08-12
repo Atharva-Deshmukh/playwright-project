@@ -56,7 +56,7 @@ test('Spying through Events', async ({ page }) => {
 });
 
 // import sinon from 'sinon';
-test.only('Spying Native objects', async ({ page }) => {
+test('Spying Native objects', async ({ page }) => {
   const myObj = {
     myFunc: (a: number, b: number) => a + b
   };
@@ -78,4 +78,77 @@ test.only('Spying Native objects', async ({ page }) => {
   expect(spy.calledOnceWithExactly(2, 3)).toBeTruthy();
 
   spy.restore();
+});
+
+/*                  If you are navigating to another frame, then use this
+--------------------------------------------------------------------------------------------
+page.addInitScript() runs the injected script only when a new document is created in a frame.
+If you never navigated or reloaded the page after calling addInitScript, 
+so the current main frame never executed the init script — window.myObj will be 
+therefore undefined when page.evaluate() runs.
+
+test.only('stub a Function and return a response', async ({ page }) => {
+
+  // Add script that will run at document start for newly created frames
+  await page.addInitScript(() => {
+    (window as any).myObj = {
+      myFunc: (a, b) => {
+        // browser-context code — keep it simple
+        return 999;
+      }
+    };
+  });
+
+  // Navigate so the init script is executed in the new document
+  await page.goto('https://example.com');
+
+  const resp = await page.evaluate(() => (window as any).myObj.myFunc(2, 3));
+  expect(resp).toBe(999);
+}); */
+
+test('Stub directly in current frame, no need of navigation', async ({ page }) => {
+  const myObj = {
+    myFunc: (a: number, b: number) => a + b
+  };
+
+  // Create sinon stub in Node context
+  const stub = sinon.stub(myObj, 'myFunc').returns(999);
+
+  // Expose stubbed function to browser
+  await page.exposeFunction('myFunc', (a: number, b: number) => {
+    return stub(a, b); // This is the sinon stub being called
+  });
+
+  // Inside the page, attach an object that calls the exposed function
+  await page.evaluate(() => {
+    (window as any).myObj = {
+      myFunc: (a: number, b: number) => (window as any).myFunc(a, b)
+    };
+  });
+
+  // Call inside browser
+  const resp = await page.evaluate(() => (window as any).myObj.myFunc(2, 3));
+
+  // Assertions
+  expect(resp).toBe(999);
+  expect(stub.calledOnceWithExactly(2, 3)).toBeTruthy();
+
+  stub.restore();
+});
+
+test.only('wait for XHR workaround', async ({ page }) => {
+  const url: string = 'https://practice-automation.com/';
+  const expectedPageTitle: string = 'Learn and Practice Automation | automateNow';
+  const spinnerButtonLocator = page.locator('a:has-text("Spinners")');
+
+  await page.goto(url);
+
+  await expect(page).toHaveTitle(expectedPageTitle);
+  await expect(spinnerButtonLocator).toBeVisible();
+  await spinnerButtonLocator.click();
+
+  // wait for XHR request
+  const responsePromise = page.waitForResponse(/sodar/);
+  const response = await responsePromise;
+  await expect(await response.ok()).toBeTruthy();
 });
