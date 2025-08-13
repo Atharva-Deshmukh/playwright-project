@@ -78,6 +78,11 @@ export default defineConfig({
     colorScheme: 'dark', /* Dark mode */
     permissions: ["clipboard-read"],
     video: 'off',
+
+    httpCredentials: {
+      username: 'admin',
+      password: 'admin',
+    }
   },
 
   expect: {

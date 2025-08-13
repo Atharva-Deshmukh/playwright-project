@@ -81,7 +81,7 @@ test('Handling Basic authentication popup Way-1', async ({ page }) => {
   await expect(authSuccessLocator).toBeVisible();
 });
 
-test.only('Handling Basic authentication popup Way-2', async ({ page }) => {
+test('Handling Basic authentication popup Way-2', async ({ page }) => {
 
   /* In postman console we can see
     GET https://the-internet.herokuapp.com/basic_auth
@@ -106,6 +106,24 @@ test.only('Handling Basic authentication popup Way-2', async ({ page }) => {
   await page.setExtraHTTPHeaders({
     'Authorization': authToken
   });
+
+  await page.goto(url);
+  await expect(authSuccessLocator).toBeVisible();
+});
+
+test.only('Configured Basic Authentication Way-3', async ({ page }) => {
+
+  const url: string = 'https://the-internet.herokuapp.com/basic_auth';
+
+  /* use: {
+
+    httpCredentials: {
+      username: 'admin',
+      password: 'admin',
+    }
+  }, */
+
+  const authSuccessLocator = await page.locator('h3:has-text("Basic Auth")');
 
   await page.goto(url);
   await expect(authSuccessLocator).toBeVisible();
