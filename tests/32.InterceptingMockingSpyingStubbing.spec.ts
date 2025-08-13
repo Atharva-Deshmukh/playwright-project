@@ -24,7 +24,6 @@ import sinon from 'sinon';
 // */
 
 
-
 test('Spying through Events', async ({ page }) => {
   const url: string = 'https://practice-automation.com/';
   const fileUploadLocator = await page.locator('a:has-text("File Upload")');
@@ -136,7 +135,7 @@ test('Stub directly in current frame, no need of navigation', async ({ page }) =
   stub.restore();
 });
 
-test.only('wait for XHR workaround', async ({ page }) => {
+test('wait for XHR workaround', async ({ page }) => {
   const url: string = 'https://practice-automation.com/';
   const expectedPageTitle: string = 'Learn and Practice Automation | automateNow';
   const spinnerButtonLocator = page.locator('a:has-text("Spinners")');
