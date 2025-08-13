@@ -45,13 +45,13 @@ test('Spying through Events', async ({ page }) => {
     const response = req.response();
   });
 
-    /* Time taken to finish the request */
-    const requestFinishedPromise = page.waitForEvent('requestfinished');
-    await page.goto('https://practice-automation.com/');
-    const request = await requestFinishedPromise;
-    console.log('TIMING -> ', request.timing().responseEnd - request.timing().responseStart);
+  /* Time taken to finish the request */
+  const requestFinishedPromise = page.waitForEvent('requestfinished');
+  await page.goto('https://practice-automation.com/');
+  const request = await requestFinishedPromise;
+  console.log('TIMING -> ', request.timing().responseEnd - request.timing().responseStart);
 
-    /* We similarly have page.on('response', (resp) => {}) object */
+  /* We similarly have page.on('response', (resp) => {}) object */
 });
 
 // import sinon from 'sinon';
@@ -150,4 +150,95 @@ test('wait for XHR workaround', async ({ page }) => {
   const responsePromise = page.waitForResponse(/sodar/);
   const response = await responsePromise;
   await expect(await response.ok()).toBeTruthy();
+});
+
+test('Aborting selective requests', async ({ page }) => {
+  /*
+  test.beforeEach(async ({ context }) => {
+
+    // Block any css requests for each test in this file.
+    await context.route(/.css$/, route => route.abort());
+
+  });
+
+  test('loads page without css', async ({ page }) => {
+    await page.goto('https://playwright.dev');
+    // ... test goes here
+  }); */
+
+  // Block png and jpeg images.
+  await page.route(/(png|jpeg)$/, route => route.abort());
+
+  // Abort based on the request type
+  await page.route('**/*', route => {
+    return route.request().resourceType() === 'image' ? route.abort() : route.continue();
+  });
+});
+
+test('Modifying requests', async ({ page }) => {
+  // Delete header
+  await page.route('**/*', async route => {
+    const headers = route.request().headers();
+    delete headers['X-Secret'];
+    await route.continue({ headers });
+  });
+
+  // Continue requests as POST. This request will go to actual server
+  await page.route('**/*', route => route.continue({ method: 'POST' }));
+});
+
+test("Mock API request, don't make actual request to server", async ({ page }) => {
+  // Mock the api call before navigating
+  await page.route('*/**/api/v1/fruits', async route => {
+    const json = [{ name: 'Strawberry', id: 21 }];
+    await route.fulfill({ json });
+  });
+
+  /* purpose of fulfill() is:
+  To short-circuit the request and respond immediately with custom data. */
+
+  // Go to the page
+  await page.goto('https://demo.playwright.dev/api-mocking');
+
+  // Assert that the Strawberry fruit is visible
+  await expect(page.getByText('Strawberry')).toBeVisible();
+});
+
+test('Modifying responses - Actual API calls are made by playwright', async ({ page }) => {
+  ///////////////////////////////////////////////////////////
+  await page.route('**/title.html', async route => {
+    // Fetch original response.
+    const response = await route.fetch();
+    // Add a prefix to the title.
+    let body = await response.text();
+    body = body.replace('<title>', '<title>My prefix:');
+    await route.fulfill({
+      // Pass all fields from the response.
+      response,
+      // Override response body.
+      body,
+      // Force content type to be html.
+      headers: {
+        ...response.headers(),
+        'content-type': 'text/html'
+      }
+    });
+  });
+  ///////////////////////////////////////////////////////////
+  // Get the response and add to it
+  await page.route('*/**/api/v1/fruits', async route => {
+    const response = await route.fetch();
+    const json = await response.json();
+    json.push({ name: 'Loquat', id: 100 });
+    // Fulfill using the original response, while patching the response body
+    // with the given JSON object.
+    await route.fulfill({ response, json });
+  });
+
+  // Go to the page
+  await page.goto('https://demo.playwright.dev/api-mocking');
+
+  // Assert that the new fruit is visible
+  await expect(page.getByText('Loquat', { exact: true })).toBeVisible();
+
 });
