@@ -82,7 +82,7 @@ test('Cookies', async ({ page }) => {
 
 /* Playwright does not have direct API methods like Cypress for localStorage/sessionStorage, 
    but you can get and set them using page.evaluate(). */
-test.only('Local Storage', async ({ page }) => {
+test('Local Storage', async ({ page }) => {
 
     const url: string = 'https://rahulshettyacademy.com/AutomationPractice/';
     const expectedPageTitle: string = 'Practice Page';
@@ -102,4 +102,28 @@ test.only('Local Storage', async ({ page }) => {
         return window.localStorage;
     });
     console.log('Local Storage after set -> ', localStorageData); // Should show { myKey: 'myValue' }
+});
+
+test.only('Session Storage', async ({ page }) => {
+
+    const url: string = 'https://rahulshettyacademy.com/AutomationPractice/';
+    const expectedPageTitle: string = 'Practice Page';
+    const headerLocator = page.locator('h1:has-text("Practice Page")');
+
+    await page.goto(url);
+    await expect(page).toHaveTitle(expectedPageTitle);
+    await expect(headerLocator).toBeVisible();
+
+    /* Set session storage */
+    await page.evaluate(() => {
+        sessionStorage.setItem('mySessionKey', 'mySessionValue');
+    });
+
+    /* Get session storage */
+    const sessionStorageData = await page.evaluate(() => {
+        return Object.fromEntries(Object.entries(sessionStorage));
+    });
+
+    // Should show { mySessionKey: 'mySessionValue' }
+    console.log('Session Storage after set -> ', sessionStorageData); 
 });
