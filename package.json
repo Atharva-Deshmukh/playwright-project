@@ -7,7 +7,9 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.53.2",
-    "@types/node": "^24.0.10"
+    "@types/node": "^24.0.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "scripts": {
     "playwright:run-dev-int-1": "playwright test tests/dev-int-1",

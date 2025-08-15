@@ -79,10 +79,14 @@ export default defineConfig({
     permissions: ["clipboard-read"],
     video: 'off',
 
+    /* For HTTP Authentication alerts */
     httpCredentials: {
       username: 'admin',
       password: 'admin',
-    }
+    },
+
+    /* To store sessions created - This file is referred for new login with existing session */
+    storageState: './preservedSession.json',
   },
 
   expect: {
