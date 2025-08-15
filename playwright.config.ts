@@ -44,7 +44,8 @@ switch (env_choosen) {
         user_name: 'DEFAULT_USERNAME',
         user_pwd: 'DEFAULT_PASSWORD',
         cust_var: 'DEFAULT_CUST_VAR',
-        ...devices['Desktop Chrome'] 
+        ...devices['Desktop Chrome'] ,
+        storageState: undefined,
       },
     }
     break;
@@ -86,7 +87,7 @@ export default defineConfig({
     },
 
     /* To store sessions created - This file is referred for new login with existing session */
-    storageState: './preservedSession.json',
+    // storageState: './preservedSession.json', uncomment for session login activation
   },
 
   expect: {
