@@ -111,7 +111,7 @@ test('Handling Basic authentication popup Way-2', async ({ page }) => {
   await expect(authSuccessLocator).toBeVisible();
 });
 
-test.only('Configured Basic Authentication Way-3', async ({ page }) => {
+test('Configured Basic Authentication Way-3', async ({ page }) => {
 
   const url: string = 'https://the-internet.herokuapp.com/basic_auth';
 
@@ -127,4 +127,61 @@ test.only('Configured Basic Authentication Way-3', async ({ page }) => {
 
   await page.goto(url);
   await expect(authSuccessLocator).toBeVisible();
+});
+
+/* Scenario:
+   - Popup will appear randomly after max. 6 seconds
+   - until its closed, no further action is possible
+
+   We will use await page.addLocatorHandler()
+   This method lets you set up a special function, called a handler, 
+   that activates when it detects that overlay is visible. The handler's job is to remove the overlay, 
+   allowing your test to continue as if the overlay wasn't there.
+
+   Playwright checks for the overlay every time before executing or retrying an action that requires an 
+   actionability check, or before performing an auto-waiting assertion check. When overlay is visible, 
+   Playwright calls the handler first, and then proceeds with the action/assertion. Note that the 
+   handler is only called when you perform an action/assertion - if the overlay becomes visible 
+   but you don't perform any actions, the handler will not be triggered.
+
+   We also need to specify when to stop waiting for the handler
+   -------------------------------------------------------------
+   An example with a custom callback on every actionability check. It uses a <body> 
+   locator that is always visible, so the handler is called before every actionability check. 
+   It is important to specify noWaitAfter, because the handler does not hide the <body> element.
+
+  // Setup the handler.
+  await page.addLocatorHandler(page.locator('body'), async () => {
+    await page.evaluate(() => window.removeObstructionsForTestIfNeeded());
+  }, { noWaitAfter: true });
+
+  By default, after calling the handler Playwright will wait until the overlay becomes hidden, 
+  and only then Playwright will continue with the action/assertion that triggered the handler. 
+  This option allows to opt-out of this behavior, so that overlay can stay visible after the handler has run.
+
+  // Write the test as usual.
+  await page.goto('https://example.com');
+  await page.getByRole('button', { name: 'Start here' }).click();
+
+  You can also automatically remove the handler after a number of invocations by setting times:
+    await page.addLocatorHandler(page.getByLabel('Close'), async locator => {
+      await locator.click();
+    }, { times: 1 });
+*/
+test.only('Handling Randomly appearing MODALS', async ({ page }) => {
+
+  const url: string = 'https://commitquality.com/practice-random-popup';
+  const accordianLocator = await page.getByText('Accordion 1');
+  const modalLocator = await page.locator('.overlay-content p:has-text("Random Popup")');
+  const closeModalButtonLocator = await page.locator('.overlay-content button:has-text("Close")');
+
+  /* Setup the handler to close the modal */
+  await page.addLocatorHandler(modalLocator, async () => {
+    await closeModalButtonLocator.click();
+  }, {times: 1});
+
+  await page.goto(url);
+  await expect(accordianLocator).toBeVisible();
+  await new Promise(resolve => setTimeout(resolve, 6000)); // Wait for the modal to appear
+  await accordianLocator.click();
 });
