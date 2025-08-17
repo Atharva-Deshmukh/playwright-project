@@ -1,0 +1,17 @@
+Techniquest to pause a Test:
+---------------------------
+
+Way-1: 
+await page.pause(); // built-in Playwright debugger
+
+Way-2:
+await new Promise(() => {}); // freezes test
+
+What it does:
+
+new Promise(() => {}) — you construct a Promise, but the executor function (() => {}) 
+doesn’t call resolve or reject.
+
+That means the Promise stays pending forever.
+
+Since you await it, the test (or script) will pause indefinitely at that line and never move forward.
