@@ -242,3 +242,21 @@ test('Modifying responses - Actual API calls are made by playwright', async ({ p
   await expect(page.getByText('Loquat', { exact: true })).toBeVisible();
 
 });
+
+test('should capture ping request', async ({ page }) => {
+  // Listen for ping request
+  const [request] = await Promise.all([
+    page.waitForRequest(req =>
+      req.method() === 'POST' && req.url().includes('your-ping-endpoint')
+    ),
+    page.goto('http://localhost:3000') // or the page triggering the ping
+  ]);
+
+  // Get request headers
+  const headers = request.headers();
+
+  // Assert ping headers
+  expect(headers['ping-from']).toBe('URL to get from inspect');
+  expect(headers['ping-to']).toBe('URL to get from inspect');
+});
+
